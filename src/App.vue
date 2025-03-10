@@ -2,7 +2,7 @@
     <div id="app">
         <h1>Pomodoro</h1>
             <div class="container">
-
+                <h2 id="pause">{{ title }}</h2>
                 <div class="timer">
                     <button id="plus" class="button-timer button plus" @click="addMinute">
                     <img src="../images/plus.png" alt="plus" />
@@ -31,8 +31,9 @@
 <script setup>
 import { ref, computed, onUnmounted } from 'vue';
 
-const minutes = ref(25);
-const seconds = ref(0);
+const title = ref("Travail");
+const minutes = ref(0);
+const seconds = ref(3);
 const isRunning = ref(false);
 let intervalId = null;
 const audio = new Audio('../sounds/lofi-295209.mp3')
@@ -51,11 +52,12 @@ const formattedTime = computed(() => {
 function startTimer() {
   if (isRunning.value) return;
   isRunning.value = true;
+  title.value = "Travail";
   playMusic()
   intervalId = setInterval(() => {
     if (minutes.value === 0 && seconds.value === 0) {
       stopTimer();
-      //pause
+      startPause();
       return;
     }
     if (seconds.value === 0) {
@@ -69,6 +71,7 @@ function startTimer() {
 
 function stopTimer() {
   isRunning.value = false;
+  isPause.value = false
   clearInterval(intervalId);
 }
 
@@ -93,6 +96,25 @@ function playMusic() {
 function stopMusic() {
     audio.pause();
     audio.currentTime = 0;
+}
+
+function startPause() {
+  if (isPause.value) return;
+  isPause.value = true;
+  title.value = "Pause";
+  seconds.value = 5;
+  intervalId = setInterval(() => {
+    if (minutes.value === 0 && seconds.value === 0) {
+      resetTimer();
+      return;
+    }
+    if (seconds.value === 0) {
+      minutes.value--;
+      seconds.value = 59;
+    } else {
+      seconds.value--;
+    }
+  }, 1000);
 }
 
 onUnmounted(() => {
