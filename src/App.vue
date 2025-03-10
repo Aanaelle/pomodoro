@@ -1,33 +1,104 @@
 <template>
-  <h1>Pomodoro</h1>
-    <div class="container">
+    <div id="app">
+        <h1>Pomodoro</h1>
+            <div class="container">
 
-      <div class="timer">
-        <button id="plus" class="button-timer button plus">
-          <img src="../images/plus.png" alt="plus" />
-        </button>
-        <div class="time">25:00</div>
-        <button id="moins" class="button-timer button">
-          <img src="../images/moins.png" alt="moins" />
-        </button>
-      </div>
+                <div class="timer">
+                    <button id="plus" class="button-timer button plus" @click="addMinute">
+                    <img src="../images/plus.png" alt="plus" />
+                    </button>
+                    <div class="time">{{ formattedTime  }}</div>
+                    <button id="moins" class="button-timer button" @click="subtractMinute">
+                    <img src="../images/moins.png" alt="moins" />
+                    </button>
+                </div>
 
-      <div class="action">
-        <button class="start button">
-          <img src="../images/start.png" alt="start" />
-        </button>
-        <button class="stop button">
-          <img src="../images/stop.png" alt="stop" />
-        </button>
-        <button class="reset button">
-          <img src="../images/reset.png" alt="reset" />
-        </button>
-      </div>
-    </div>
+                <div class="action">
+                    <button class="start button" @click="startTimer">
+                    <img src="../images/start.png" alt="start" />
+                    </button>
+                    <button class="stop button" @click="stopTimer">
+                    <img src="../images/stop.png" alt="stop" />
+                    </button>
+                    <button class="reset button" @click="resetTimer">
+                    <img src="../images/reset.png" alt="reset" />
+                    </button>
+                </div>
+            </div>
+        </div>
 </template>
 
 <script setup>
-    console.log('👋 This message is being logged by "App.vue", included via Vite');
+import { ref, computed, onUnmounted } from 'vue';
+
+const minutes = ref(25);
+const seconds = ref(0);
+const isRunning = ref(false);
+let intervalId = null;
+const audio = new Audio('../sounds/lofi-295209.mp3')
+const isPause = ref(false)
+
+/**
+ * Permet de formatter le minuteur
+ */
+const formattedTime = computed(() => {
+  const m = String(minutes.value).padStart(2, '0');
+  const s = String(seconds.value).padStart(2, '0');
+  return `${m}:${s}`;
+});
+
+
+function startTimer() {
+  if (isRunning.value) return;
+  isRunning.value = true;
+  playMusic()
+  intervalId = setInterval(() => {
+    if (minutes.value === 0 && seconds.value === 0) {
+      stopTimer();
+      //pause
+      return;
+    }
+    if (seconds.value === 0) {
+      minutes.value--;
+      seconds.value = 59;
+    } else {
+      seconds.value--;
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  isRunning.value = false;
+  clearInterval(intervalId);
+}
+
+function resetTimer() {
+  stopTimer();
+  minutes.value = 25;
+  seconds.value = 0;
+}
+function addMinute() {
+  minutes.value++;
+}
+function subtractMinute() {
+  if (minutes.value > 0) {
+    minutes.value--;
+  }
+}
+
+function playMusic() {   
+    audio.play();
+}
+
+function stopMusic() {
+    audio.pause();
+    audio.currentTime = 0;
+}
+
+onUnmounted(() => {
+  stopTimer();
+});
+
 </script>
 
 <style>
@@ -37,7 +108,7 @@
     margin: auto;
     max-width: 38rem;
     padding: 2rem;
-    background-color: #8bf3ff;
+    background-color: #b7f3c8;
     }
 
     .timer {
