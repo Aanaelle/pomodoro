@@ -2,26 +2,27 @@
     <div id="app">
         <h1>Pomodoro</h1>
             <div class="container">
-                <h2 id="pause">{{ title }}</h2>
+                <h2 id="title">{{ isPause ? "Pause" : "Travail" }}</h2>
+
                 <div class="timer">
                     <button id="plus" class="button-timer button plus" @click="addMinute">
-                    <img src="../images/plus.png" alt="plus" />
+                      <img src="../images/plus.png" alt="plus" />
                     </button>
                     <div class="time">{{ formattedTime  }}</div>
                     <button id="moins" class="button-timer button" @click="subtractMinute">
-                    <img src="../images/moins.png" alt="moins" />
+                      <img src="../images/moins.png" alt="moins" />
                     </button>
                 </div>
 
                 <div class="action">
                     <button class="start button" @click="startTimer">
-                    <img src="../images/start.png" alt="start" />
+                      <img src="../images/start.png" alt="start" />
                     </button>
                     <button class="stop button" @click="stopTimer">
-                    <img src="../images/stop.png" alt="stop" />
+                      <img src="../images/stop.png" alt="stop" />
                     </button>
                     <button class="reset button" @click="resetTimer">
-                    <img src="../images/reset.png" alt="reset" />
+                      <img src="../images/reset.png" alt="reset" />
                     </button>
                 </div>
             </div>
@@ -29,11 +30,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onUnmounted } from 'vue';
+import { ref, computed, onUnmounted, triggerRef } from 'vue';
 
 const title = ref("Travail");
-const minutes = ref(0);
-const seconds = ref(3);
+const minutes = ref(25);
+const seconds = ref(0);
 const isRunning = ref(false);
 let intervalId = null;
 const audio = new Audio('../sounds/lofi-295209.mp3')
@@ -48,63 +49,16 @@ const formattedTime = computed(() => {
   return `${m}:${s}`;
 });
 
-
+/**
+ * Permet de lancer le miniteur de travail ou de pause
+ */
 function startTimer() {
   if (isRunning.value) return;
   isRunning.value = true;
-  title.value = "Travail";
   playMusic()
   intervalId = setInterval(() => {
     if (minutes.value === 0 && seconds.value === 0) {
-      stopTimer();
-      startPause();
-      return;
-    }
-    if (seconds.value === 0) {
-      minutes.value--;
-      seconds.value = 59;
-    } else {
-      seconds.value--;
-    }
-  }, 1000);
-}
-
-function stopTimer() {
-  isRunning.value = false;
-  isPause.value = false
-  clearInterval(intervalId);
-}
-
-function resetTimer() {
-  stopTimer();
-  minutes.value = 25;
-  seconds.value = 0;
-}
-function addMinute() {
-  minutes.value++;
-}
-function subtractMinute() {
-  if (minutes.value > 0) {
-    minutes.value--;
-  }
-}
-
-function playMusic() {   
-    audio.play();
-}
-
-function stopMusic() {
-    audio.pause();
-    audio.currentTime = 0;
-}
-
-function startPause() {
-  if (isPause.value) return;
-  isPause.value = true;
-  title.value = "Pause";
-  seconds.value = 5;
-  intervalId = setInterval(() => {
-    if (minutes.value === 0 && seconds.value === 0) {
+      isPause.value = !isPause.value;
       resetTimer();
       return;
     }
@@ -115,6 +69,55 @@ function startPause() {
       seconds.value--;
     }
   }, 1000);
+}
+
+/**
+ * Permet de mettre le minuteur sur pause
+ */
+function stopTimer() {
+  isRunning.value = false;
+  clearInterval(intervalId);
+}
+
+/**
+ * Permet de remettre le minuteur à zéro
+ */
+function resetTimer() {
+  stopTimer();
+
+  minutes.value = isPause.value ? 5 : 25;
+  seconds.value = 0;
+}
+
+/**
+ * Permet d'ajouter des minutes au minuteur avec le bouton plus
+ */
+function addMinute() {
+  minutes.value++;
+}
+
+/**
+ * Permet de retirer des minutes au minuteur avec le bouton moins
+ */
+function subtractMinute() {
+  if (minutes.value > 0) {
+    minutes.value--;
+  }
+}
+
+/**
+ * Permet de lancer la musique 
+ */
+function playMusic() {   
+    audio.play();
+}
+
+/**
+ * Permet de mettre la musique sur pause
+ */
+function stopMusic() {
+    audio.pause();
+    audio.currentTime = 0;
 }
 
 onUnmounted(() => {
@@ -157,5 +160,10 @@ onUnmounted(() => {
 
     .action {
     display: flex;
+    }
+
+    .title {
+      margin-left: auto;
+      margin-right: auto;
     }
 </style>
