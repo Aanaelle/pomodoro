@@ -1,32 +1,31 @@
 <template>
-    <div id="app">
-        <h1>Pomodoro</h1>
-            <div class="container">
-                <h2 id="title">{{ isPause ? "Pause" : "Travail" }}</h2>
+  <div id="app">
+    <div class="container">
+      <h2 class="title">{{ isPause ? "Pause" : "Travail" }}</h2>
 
-                <div class="timer">
-                    <button id="plus" class="button-timer button plus" @click="addMinute">
-                      <img src="../images/plus.png" alt="plus" />
-                    </button>
-                    <div class="time">{{ formattedTime  }}</div>
-                    <button id="moins" class="button-timer button" @click="subtractMinute">
-                      <img src="../images/moins.png" alt="moins" />
-                    </button>
-                </div>
+      <div class="timer">
+        <button id="plus" class="button-timer button plus" @click="addMinute">
+          <img src="../images/plus.png" alt="plus" />
+        </button>
+        <div class="time">{{ formattedTime }}</div>
+        <button id="moins" class="button-timer button" @click="subtractMinute">
+          <img src="../images/moins.png" alt="moins" />
+        </button>
+      </div>
 
-                <div class="action">
-                    <button class="start button" @click="startTimer">
-                      <img src="../images/start.png" alt="start" />
-                    </button>
-                    <button class="stop button" @click="stopTimer">
-                      <img src="../images/stop.png" alt="stop" />
-                    </button>
-                    <button class="reset button" @click="resetTimer">
-                      <img src="../images/reset.png" alt="reset" />
-                    </button>
-                </div>
-            </div>
-        </div>
+      <div class="action">
+        <button class="start button" @click="startTimer">
+          <img src="../images/start.png" alt="start" />
+        </button>
+        <button class="stop button" @click="stopTimer">
+          <img src="../images/stop.png" alt="stop" />
+        </button>
+        <button class="reset button" @click="resetTimer">
+          <img src="../images/reset.png" alt="reset" />
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -108,16 +107,16 @@ function subtractMinute() {
 /**
  * Permet de lancer la musique 
  */
-function playMusic() {   
-    audio.play();
+function playMusic() {
+  audio.play();
 }
 
 /**
  * Permet de mettre la musique sur pause
  */
 function stopMusic() {
-    audio.pause();
-    audio.currentTime = 0;
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 onUnmounted(() => {
@@ -127,43 +126,62 @@ onUnmounted(() => {
 </script>
 
 <style>
-    body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-        Arial, sans-serif;
-    margin: auto;
-    max-width: 38rem;
-    padding: 2rem;
-    background-color: #b7f3c8;
-    }
+@font-face {
+  font-family: 'PolicePrinc';
+  src: url('../polices/upheavtt.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-    .timer {
-    font-size: 3rem;
-    font-weight: 700;
-    text-align: center;
-    }
+@font-face {
+  font-family: 'PoliceSec';
+  src: url('../polices/PressStart2P.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-    .button {
-    background: none;
-    border: none;
-    }
+body {
+  font-family: 'PolicePrinc', sans-serif;
+  /* Utilise PolicePrinc si disponible, sinon sans-serif */
+  margin: auto;
+  max-width: 38rem;
+  padding: 2rem;
+  background-color: #b7f3c8;
+}
 
-    .button:active img {
-    transform: translateY(2px);
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
+.timer {
+  font-size: 4rem;
+  text-align: center;
+  margin: 1%
+}
 
-    img {
-    width: 200px;
-    height: 100px;
-    }
+.time {
+  margin: 5%;
+}
 
-    .action {
-    display: flex;
-    }
+.button {
+  background: none;
+  border: none;
+}
 
-    .title {
-      margin-left: auto;
-      margin-right: auto;
-    }
+.button:active img {
+  transform: translateY(2px);
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+img {
+  width: 200px;
+  height: 100px;
+}
+
+.action {
+  display: flex;
+}
+
+.title {
+  text-align: center;
+  color: rgb(254, 70, 61);
+  font-family: PoliceSec;
+}
 </style>
